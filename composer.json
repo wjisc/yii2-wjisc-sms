@@ -10,9 +10,7 @@
             "email": "hotar.zhang@gmail.com"
         }
     ],
-    "require": {
-        "yiisoft/yii2": "*"
-    },
+    "require": {},
     "autoload": {
         "psr-4": {
             "hoter\\ctmsms\\": ""
