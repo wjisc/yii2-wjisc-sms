@@ -12,15 +12,18 @@ namespace hoter\ctmsms;
 class CtmSend {
 
     private $postUrl = "http://202.75.248.226/HttpSend/HttpSendAction";
-    private $copid = "1888";
-    private $username = "abc";
-    private $password = "123";
+    private $copid;
+    private $username;
+    private $password;
     private $time;
     private $from;
     private $to;
     private $text;
 
     public function __construct($arr) {
+        $this->from = (isset($arr['copid'])&&$arr['copid']!='') ? $arr['copid'] : '';
+        $this->from = (isset($arr['username'])&&$arr['username']!='') ? $arr['username'] : '';
+        $this->from = (isset($arr['password'])&&$arr['password']!='') ? $arr['password'] : '';
         $this->from = (isset($arr['from'])&&$arr['from']!='') ? $arr['from'] : '';
         $this->to = (isset($arr['to'])&&$arr['to']!='') ? $arr['to'] : '';
         $this->text = (isset($arr['text'])&&$arr['text']!='') ? $arr['text'] : '';
