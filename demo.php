@@ -69,3 +69,69 @@ echo $requestUrl = "http://sms.com/index.php?r=api/sms&".$urlStr;
         return md5($preStr);
     }
  ****/
+
+/******************** 服務端 ****************************/
+\Yii::$app->response->format = Response::FORMAT_JSON;
+//第一步獲取用戶提交的partner
+$partner = \Yii::$app->request->get('partner');
+$key = \Yii::$app->request->get('key');
+$sign = \Yii::$app->request->get('sign');
+$from = \Yii::$app->request->get('from');
+$to = \Yii::$app->request->get('to');
+$text = \Yii::$app->request->get('text');
+$time = \Yii::$app->request->get('time', time());
+
+
+/*
+ * 查詢數據庫操作
+ * 1、partner是否存在？
+ * return [
+ *  'status' => '3',
+ *  'message' => '用戶partner不存在'
+ * ];
+ * 2、驗證key是否正確？
+ * return [
+ *  'status' => '4',
+ *  'message' => '授權key不正確'
+ * ]
+ */
+
+//3 驗證sign是否正確
+$config = [
+    'partner' => $partner,
+    'key' => $key,
+];
+$sms = new Sms($config);
+$param = [
+    'from' => $from,
+    'to' => $to,
+    'text' => $text,
+    'time' => $time,
+    'sign' => $sign
+];
+
+if ($sms->verifySing($param)) {
+    $arr = [
+        'form' => $from,
+        'to' => $to,
+        'text' =>$text,
+        'time' => $time
+    ];
+    $ctm = new CtmSend($arr);
+    if ($ctm->sendMsg()) {
+        return [
+            'status' => '1',
+            'message' => '發送成功'
+        ];
+    } else {
+        return [
+            'status' => '0',
+            'message' => '發送失敗'
+        ];
+    }
+} else {
+    return [
+        'status' => '2',
+        'message' => '簽名失敗'
+    ];
+}
